@@ -3,6 +3,7 @@
 #include <math.h>
 #include "simulation.h"
 
+//initialization of simulation parameters
 Simulation::Simulation(double set_moment_inertia,\
               double set_t_max, double set_h_m,\
               double set_h_v, double set_cooling_factor,\
@@ -19,16 +20,18 @@ Simulation::Simulation(double set_moment_inertia,\
     acceleration = current_torque/moment_inertia;
     index = 1;
 }
+//strt simulation, 
 void Simulation::start() {
     while (current_motor_temperature < t_max) {
-        time++;
+        time++;   // simulation time step 1 second
         change_speed_parametrs();
         change_current_motor_temperature();
     }
 }
 double Simulation::get_time() {
     return time;
-}    
+}
+// change in crankshaft speed, moment of force and acceleration at the next time step
 void Simulation::change_speed_parametrs() {
     if (current_crankshaft_speed + acceleration*time > crankshaft_speed[index]) {
         time--;
@@ -45,10 +48,14 @@ void Simulation::change_speed_parametrs() {
     }
     acceleration = current_torque/moment_inertia;
 }
+// change in motor temperature at the next time step
 void Simulation::change_current_motor_temperature() {
     double speed_heat = current_torque*h_m + pow(current_crankshaft_speed, 2)*h_v;
+    // expression obtained integration dT/dt = V_h + V_c
+    // V_h = h_m*M + V**2*h_v
+    // V_c = C*(Ta - T)
     double new_temperature = (speed_heat + cooling_factor*ambient_temperature - speed_heat*exp(-cooling_factor*time))/cooling_factor;
-    if (new_temperature == current_motor_temperature) {
+    if (new_temperature == current_motor_temperature) { //loop check
         std::cout << "temperature does not change\n";
         exit(0);
     }

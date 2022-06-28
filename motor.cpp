@@ -2,6 +2,7 @@
 #include <vector>
 #include "motor.h"
 
+//initialization of motor parameters
 Motor::Motor(double set_moment_inertia,\
               double set_t_max, double set_h_m,\
               double set_h_v, double set_cooling_factor,\
@@ -17,6 +18,7 @@ Motor::Motor(double set_moment_inertia,\
     cooling_factor = set_cooling_factor;
     check_parametrs();
 }
+//parameter validation
 void Motor::check_parametrs() {
     if (torque.size() != crankshaft_speed.size()) {
         std::cout << "Different number of points for the dependence of torque on the speed of rotation of the crankshaft\n";
